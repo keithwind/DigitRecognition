@@ -1,15 +1,22 @@
-import imp
 from network import Network
 import mnist_loader as ml
+import json
 
-training_images, training_labels = ml.data_loader()
+training_images, training_labels = ml.training_data_loader()
 
-nn = Network([784,16,10])
+test_images, test_labels = ml.test_data_loader()
 
-output = nn.feedforward(training_images[0])
+print("Data Loaded!!")
 
-print(output)
+test_data = list(zip(test_images,test_labels))
 
-print('\n\n\n')
+nn = Network([784,30,10])
+print(nn.evaluate(test_data))
+nn.SGD(list(zip(training_images,training_labels)), 2, 10, 3.0,test_data=test_data)
+json.dump(nn,"yay.txt")
+for i in range(100):
+    output = nn.feedforward(training_images[i])
+    print(f"{(output.argmax(), training_labels[i].argmax())}")
 
-print(training_labels[0])
+
+#print(training_images[0][32])
